@@ -3,6 +3,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version '0.9.7'
 }
+apply plugin: 'groovy'
 
 group 'fi.linuxbox'
 version '0.1'
@@ -15,7 +16,12 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile gradleApi()
+
+    testCompile 'junit:junit:4.12'
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+        exclude module: 'groovy-all'
+    }
 }
 
 gradlePlugin {
