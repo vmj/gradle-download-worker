@@ -1,0 +1,47 @@
+image:https://travis-ci.org/vmj/gradle-download-worker.svg?branch=master["Build Status", link="https://travis-ci.org/vmj/gradle-download-worker"]
+
+# A parallel download task type for Gradle
+
+This Gradle plugin implements a parallel download task type.
+
+This is implemented with Gradle Worker API, so Gradle 3.5 is a minimum
+requirement.  Also, Java 8 is used.
+
+## Usage
+
+A contrived example usage:
+
+```
+  plugins {
+    id 'fi.linuxbox.download.worker' version "0.1"
+  }
+  import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+
+  task downloadAll {
+    group 'My tasks'
+    description 'Download all ChangeLogs'
+  }
+
+  ['slackware', 'slackware64'].each { distroName ->
+    ['13.0', '13.1', '13.37', '14.0', '14.1', '14.2'].each { distroVersion ->
+      def download = task("fetch-$distroName-$distroVersion", type: DownloadWorkerTask) {
+        from "http://ftp.osuosl.org/pub/slackware/$distroName-$distroVersion/ChangeLog.txt"
+        to new File(buildDir, "changelogs/$distroName/$distroVersion/ChangeLog.txt")
+      }
+      def copy = task("last-$distroName-$distroVersion", type: Copy) {
+        from download
+        into new File(buildDir, "copies/$distroName/$distroVersion/")
+      }
+      downloadAll.dependsOn copy
+    }
+  }
+```
+
+With above build script, the first run of `gradle downloadAll` would download
+the ChangeLog files in parallel.  Then it would copy each ChangeLog as
+soon as it was downloaded, i.e. in parallel.
+
+The second invocation of `gradle downloadAll` would finish pretty quickly,
+as the download task will make a conditional HTTP GET and, since the ChangeLogs
+will not be updated, copy tasks will report UP-TO-DATE.
+

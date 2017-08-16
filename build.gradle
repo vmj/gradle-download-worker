@@ -1,0 +1,47 @@
+plugins {
+    id 'com.gradle.build-scan' version '1.8'
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.9.7'
+}
+
+group 'fi.linuxbox'
+version '0.1'
+ext.pluginId = "fi.linuxbox.download.worker"
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+gradlePlugin {
+    plugins {
+        "DownloadWorkerPlugin" {
+            id = pluginId
+            implementationClass = "fi.linuxbox.gradle.download.worker.DownloadWorkerPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/vmj/gradle-download-worker'
+    vcsUrl = 'https://github.com/vmj/gradle-download-worker'
+
+    plugins {
+        "DownloadWorkerPlugin" {
+            id = pluginId
+            displayName = "Download Worker Gradle plugin"
+            description = "Download Worker Gradle plugin"
+            tags = ['download', 'worker']
+        }
+    }
+}
+
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
+}
