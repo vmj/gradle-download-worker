@@ -4,7 +4,7 @@ image:https://travis-ci.org/vmj/gradle-download-worker.svg?branch=master["Build 
 
 This Gradle plugin implements a parallel download task type.
 
-This is implemented with Gradle Worker API, so Gradle 3.5 is a minimum
+This is implemented with Gradle Worker API, so Gradle 4.0 is a minimum
 requirement.  Also, Java 8 is used.
 
 ## Usage
@@ -22,16 +22,31 @@ A contrived example usage:
     description 'Download all ChangeLogs'
   }
 
-  ['slackware', 'slackware64'].each { distroName ->
-    ['13.0', '13.1', '13.37', '14.0', '14.1', '14.2'].each { distroVersion ->
-      def download = task("fetch-$distroName-$distroVersion", type: DownloadWorkerTask) {
-        from "http://ftp.osuosl.org/pub/slackware/$distroName-$distroVersion/ChangeLog.txt"
-        to new File(buildDir, "changelogs/$distroName/$distroVersion/ChangeLog.txt")
+  ext {
+    distroNames = ['slackware', 'slackware64']
+    distroVersions = ['13.0', '13.1', '13.37', '14.0', '14.1', '14.2']
+  }
+
+  distroNames.each { distroName ->
+    distroVersions.each { distroVersion ->
+      def distro = "$distroName-$distroVersion"
+      def path = "$distroName/$distroVersion"
+
+      // Define a parallel download task for this distro version
+      def download = task("download-$distro-changelog", type: DownloadWorkerTask) {
+        from "http://ftp.osuosl.org/pub/slackware/$distro/ChangeLog.txt"
+        to new File(buildDir, "changelogs/$path/ChangeLog.txt")
       }
-      def copy = task("last-$distroName-$distroVersion", type: Copy) {
+
+      // Just to demo the UP-TO-DATE functionality:
+      // even though the download task does some work (conditional GET)
+      // it doesn't necessarily touch the artifact.
+      // That allows Gradle to skip the copy task.
+      def copy = task("copy-$distro-changelog", type: Copy) {
         from download
-        into new File(buildDir, "copies/$distroName/$distroVersion/")
+        into new File(buildDir, "copies/$path/")
       }
+
       downloadAll.dependsOn copy
     }
   }
@@ -42,6 +57,6 @@ the ChangeLog files in parallel.  Then it would copy each ChangeLog as
 soon as it was downloaded, i.e. in parallel.
 
 The second invocation of `gradle downloadAll` would finish pretty quickly,
-as the download task will make a conditional HTTP GET and, since the ChangeLogs
-will not be updated, copy tasks will report UP-TO-DATE.
-
+as the download task will make a conditional HTTP GET and,
+since the ChangeLogs will not be updated,
+copy tasks will report UP-TO-DATE.
