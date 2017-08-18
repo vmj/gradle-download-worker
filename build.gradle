@@ -6,7 +6,7 @@ plugins {
 apply plugin: 'groovy'
 
 group 'fi.linuxbox'
-version '0.1'
+version '0.2'
 ext.pluginId = "fi.linuxbox.download.worker"
 
 sourceCompatibility = 1.8
