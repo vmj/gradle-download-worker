@@ -1,6 +1,7 @@
 plugins {
     id 'com.gradle.build-scan' version '1.9'
     id 'java-gradle-plugin'
+    id 'org.unbroken-dome.test-sets' version '1.4.2'
     id 'com.gradle.plugin-publish' version '0.9.7'
 }
 apply plugin: 'groovy'
@@ -16,16 +17,24 @@ repositories {
     jcenter()
 }
 
-dependencies {
-    compile gradleApi()
+testSets {
+    integrationTest
+    functionalTest
+}
+check.dependsOn integrationTest
+check.dependsOn functionalTest
 
+dependencies {
     testCompile 'junit:junit:4.12'
-    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+
+    functionalTestCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
 }
 
 gradlePlugin {
+    testSourceSets sourceSets.functionalTest
+
     plugins {
         "DownloadWorkerPlugin" {
             id = pluginId
