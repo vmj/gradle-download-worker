@@ -3,6 +3,7 @@ package fi.linuxbox.gradle.download.worker
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -50,6 +51,7 @@ class DownloadWorkerTaskTest extends Specification {
     }
 
     @Unroll
+    @IgnoreIf({System.getProperty('IS_OFFLINE') == '1'})
     def "can execute download with Gradle version #gradleVersion"() {
         given:
         buildFile << """

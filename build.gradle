@@ -27,6 +27,12 @@ testSets {
 check.dependsOn integrationTest
 check.dependsOn functionalTest
 
+functionalTest {
+    if(gradle.startParameter.isOffline()) {
+        systemProperties.IS_OFFLINE = '1'
+    }
+}
+
 dependencies {
     testCompile 'junit:junit:4.12'
 
