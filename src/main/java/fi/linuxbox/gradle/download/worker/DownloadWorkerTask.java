@@ -26,8 +26,8 @@ public class DownloadWorkerTask extends DefaultTask {
 
     @TaskAction
     public void fetch() throws MalformedURLException {
-        final URL url = new URL(this.from);
-        final File dest = getProject().file(this.to);
+        final URL url = getFrom();
+        final File dest = getTo();
 
         workerExecutor.submit(Download.class, config -> {
             config.setIsolationMode(IsolationMode.NONE);
@@ -36,8 +36,12 @@ public class DownloadWorkerTask extends DefaultTask {
     }
 
     @Input
-    public String getFrom() {
-        return from;
+    public URL getFrom() {
+        try {
+            return new URL(this.from);
+        } catch (final MalformedURLException e) {
+            throw new RuntimeException("invalid 'from' URL", e);
+        }
     }
 
     public void setFrom(final String from) {
@@ -45,8 +49,8 @@ public class DownloadWorkerTask extends DefaultTask {
     }
 
     @OutputFile
-    public Object getTo() {
-        return to;
+    public File getTo() {
+        return getProject().file(this.to);
     }
 
     public void setTo(final Object to) {
