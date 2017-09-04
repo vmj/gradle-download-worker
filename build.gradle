@@ -8,7 +8,10 @@ apply plugin: 'groovy'
 
 group 'fi.linuxbox'
 version '0.3-SNAPSHOT'
-ext.pluginId = "fi.linuxbox.download.worker"
+ext {
+    pluginId = "fi.linuxbox.download.worker"
+    spockGroovyVer = GroovySystem.version.replaceAll(/\.\d+$/,'')
+}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -27,7 +30,7 @@ check.dependsOn functionalTest
 dependencies {
     testCompile 'junit:junit:4.12'
 
-    functionalTestCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+    functionalTestCompile("org.spockframework:spock-core:1.1-groovy-${spockGroovyVer}") {
         exclude module: 'groovy-all'
     }
 }
