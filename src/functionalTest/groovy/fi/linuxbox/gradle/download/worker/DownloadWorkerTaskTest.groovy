@@ -57,7 +57,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << """
         plugins {
-          id 'fi.linuxbox.download.worker' version "0.1"
+          id 'fi.linuxbox.download.worker' version "0.3"
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
       

@@ -4,16 +4,30 @@ image:https://travis-ci.org/vmj/gradle-download-worker.svg?branch=master["Build 
 
 This Gradle plugin implements a parallel download task type.
 
-This is implemented with Gradle Worker API, so Gradle 4.0 is a minimum
-requirement.  Also, Java 8 is used.
+This is implemented with Gradle Worker API, so *Gradle 4.0 or newer* is required.
+Also, *Java 8* is used.
 
 ## Usage
 
-A contrived example usage:
+Basic usage is as follows:
 
 ```
   plugins {
-    id 'fi.linuxbox.download.worker' version "0.1"
+    id 'fi.linuxbox.download.worker' version "0.3"
+  }
+  import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+
+  task("my-download", type: DownloadWorkerTask) {
+    from 'https://www.google.com/robots.txt'
+    to "$buildDir/robots.txt"
+  }
+```
+
+A more interesting example:
+
+```
+  plugins {
+    id 'fi.linuxbox.download.worker' version "0.3"
   }
   import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
 
@@ -60,3 +74,12 @@ The second invocation of `gradle downloadAll` would finish pretty quickly,
 as the download task will make a conditional HTTP GET and,
 since the ChangeLogs will not be updated,
 copy tasks will report UP-TO-DATE.
+
+## Task Configuration
+
+In addition to the mandatory `from` (HTTP(S) URL) and `to` (anything that can be interpreted by project
+`file` method, following optional properties can be set:
+
+ * connectTimeout: Defaults to 30 seconds; speecified in milliseconds
+ * readTimout: Defaults to 30 seconds; speecified in milliseconds
+
