@@ -5,45 +5,52 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
 public class Download implements Runnable {
     private final Logger log = LoggerFactory.getLogger(Download.class);
 
-    private final URL from;
-    private final File to;
+    private final Params params;
 
     @Inject
-    public Download(final URL from, final File to) {
-        this.from = from;
-        this.to = to;
+    public Download(final Params params) {
+        this.params = params;
     }
 
     @Override
     public void run() {
         try {
             fetch();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException("unknown host: " + e.getMessage(), e);
+        } catch (SocketTimeoutException e) {
+            throw new RuntimeException(e.getMessage(), e);
         } catch (IOException e) {
             throw new RuntimeException("download failed", e);
         }
     }
 
     private void fetch() throws IOException {
-        final URLConnection cnx = urlConnection(from);
+        final HttpURLConnection cnx = urlConnection(params.getFrom());
 
-        if (to.exists())
-            cnx.setIfModifiedSince(to.lastModified());
+        if (params.getTo().exists())
+            cnx.setIfModifiedSince(params.getTo().lastModified());
 
-        cnx.connect();
+        cnx.connect(); // both timeouts thrown from here
 
-        log(cnx.getHeaderFields());
+        final int responseCode = cnx.getResponseCode();
 
-        final long contentLength = cnx.getContentLengthLong();
+        logHeaders(cnx.getHeaderFields());
 
-        if (contentLength <= 0) {
+        if (responseCode >= 400) {
+            throw new RuntimeException("HTTP error: " + responseCode);
+        }
+        if (responseCode >= 300) {
             // as long as we don't touch the output file,
             // gradle seems to figure out the next task is up-to-date
             log.info("up-to-date");
@@ -54,9 +61,9 @@ public class Download implements Runnable {
             return;
         }
 
-        write(cnx.getInputStream(), new FileOutputStream(to), contentLength);
+        write(cnx.getInputStream(), new FileOutputStream(params.getTo()), cnx.getContentLengthLong());
 
-        if (!to.setLastModified(cnx.getLastModified()))
+        if (!params.getTo().setLastModified(cnx.getLastModified()))
             log.warn("unable to set modification time; up-to-date checks may not work");
     }
 
@@ -67,13 +74,16 @@ public class Download implements Runnable {
      * @return A URL connection
      * @throws IOException in case opening the connection fails.
      */
-    private URLConnection urlConnection(final URL url) throws IOException {
-        final URLConnection cnx = url.openConnection();
+    private HttpURLConnection urlConnection(final URL url) throws IOException {
+        final HttpURLConnection cnx = (HttpURLConnection) url.openConnection();
 
         cnx.setAllowUserInteraction(false);
         cnx.setDoInput(true);
         cnx.setDoOutput(false);
         cnx.setUseCaches(true);
+
+        cnx.setConnectTimeout(params.getConnectTimeout());
+        cnx.setReadTimeout(params.getReadTimeout());
 
         return cnx;
     }
@@ -81,7 +91,7 @@ public class Download implements Runnable {
     private void write(final InputStream inputStream,
                        final OutputStream outStream,
                        final long contentLength) throws IOException {
-        byte[] buffer = new byte[(int)(contentLength % Integer.MAX_VALUE)];
+        byte[] buffer = new byte[contentLength > 0 ? (int)(contentLength % Integer.MAX_VALUE) : 256 * 1024];
         int bytesRead;
         int totalRead = 0;
         int totalWritten = 0;
@@ -92,8 +102,8 @@ public class Download implements Runnable {
                 totalWritten += bytesRead;
             }
         } finally {
-            if (contentLength != totalWritten) {
-                log.warn("closing streams before full write, r:" + totalRead + "/w:" + totalWritten + " (bytes)");
+            if (contentLength > 0 && contentLength != totalWritten) {
+                log.warn("closing streams before full write: content " + contentLength + ", r:" + totalRead + "/w:" + totalWritten + " (bytes)");
             }
             try {
                 inputStream.close();
@@ -108,7 +118,7 @@ public class Download implements Runnable {
         }
     }
 
-    private void log(final Map<String, List<String>> headerFields) {
+    private void logHeaders(final Map<String, List<String>> headerFields) {
         for (final String headerValue : headerFields.get(null)) {
             log.debug("> " + headerValue);
         }
