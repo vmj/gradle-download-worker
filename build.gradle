@@ -3,14 +3,45 @@ plugins {
     id 'java-gradle-plugin'
     id 'org.unbroken-dome.test-sets' version '1.4.2'
     id 'com.gradle.plugin-publish' version '0.9.7'
+    id "com.bmuschko.nexus" version "2.3.1"
 }
 apply plugin: 'groovy'
 
-group 'fi.linuxbox'
+group 'fi.linuxbox.gradle'
 version '0.3'
 ext {
     pluginId = "fi.linuxbox.download.worker"
     spockGroovyVer = GroovySystem.version.replaceAll(/\.\d+$/,'')
+}
+
+modifyPom {
+    project {
+        name 'gradle-download-worker'
+        description 'Parallel Download Worker Gradle plugin'
+        url 'https://github.com/vmj/gradle-download-worker'
+
+        licenses {
+            license {
+                name 'GNU General Public License, version 3'
+                url 'http://www.gnu.org/licenses/gpl-3.0.html'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'vmj'
+                name 'Mikko Värri'
+                email 'mikko@varri.fi'
+            }
+        }
+
+        scm {
+            url 'https://github.com/vmj/gradle-download-worker'
+            connection 'scm:https://github.com/vmj/gradle-download-worker.git'
+            developerConnection 'scm:git@github.com:vmj/gradle-download-worker.git'
+        }
+    }
 }
 
 sourceCompatibility = 1.8
