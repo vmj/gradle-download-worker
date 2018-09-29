@@ -117,6 +117,7 @@ class DownloadWorkerTaskTest extends Specification {
         gradleVersion << gradleVersions
     }
 
+    @IgnoreIf({System.getProperty('IS_OFFLINE') == '1'})
     def "Unknown host error"() {
         given:
         buildFile << """
@@ -148,6 +149,7 @@ class DownloadWorkerTaskTest extends Specification {
 
     }
 
+    @IgnoreIf({System.getProperty('IS_OFFLINE') == '1'})
     def "Connect timeout error"() {
         given:
         buildFile << """
@@ -180,6 +182,7 @@ class DownloadWorkerTaskTest extends Specification {
         writer.toString().contains('connect timed out')
     }
 
+    @IgnoreIf({System.getProperty('IS_OFFLINE') == '1'})
     def "Read timeout error"() {
         given:
         buildFile << """
@@ -212,6 +215,7 @@ class DownloadWorkerTaskTest extends Specification {
         writer.toString().contains('Read timed out')
     }
 
+    @IgnoreIf({System.getProperty('IS_OFFLINE') == '1'})
     def "HTTP error"() {
         given:
         buildFile << """
