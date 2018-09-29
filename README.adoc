@@ -80,6 +80,6 @@ copy tasks will report UP-TO-DATE.
 In addition to the mandatory `from` (HTTP(S) URL) and `to` (anything that can be interpreted by project
 `file` method, following optional properties can be set:
 
- * connectTimeout: Defaults to 30 seconds; speecified in milliseconds
- * readTimout: Defaults to 30 seconds; speecified in milliseconds
+ * connectTimeout: Defaults to 30 seconds; specified in milliseconds
+ * readTimeout: Defaults to 30 seconds; specified in milliseconds
 
