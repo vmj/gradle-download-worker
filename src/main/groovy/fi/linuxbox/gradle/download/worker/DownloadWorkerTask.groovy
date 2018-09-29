@@ -39,16 +39,12 @@ class DownloadWorkerTask extends DefaultTask {
     }
 
     @Input
-    URI getFrom() {
-        final i = this.from?.indexOf(':')
-        if (i in [4, 5] && this.from[0..i-1] in ['http', 'https']) {
-            try {
-                return new URI(this.from)
-            } catch (final Exception e) {
-                throw new RuntimeException("invalid 'from' URL", e)
-            }
+    URL getFrom() {
+        try {
+            return new URL(this.from)
+        } catch (final MalformedURLException e) {
+            throw new RuntimeException("invalid 'from' URL", e)
         }
-        throw new RuntimeException("invalid 'from' URL")
     }
 
     void setFrom(final String from) {
