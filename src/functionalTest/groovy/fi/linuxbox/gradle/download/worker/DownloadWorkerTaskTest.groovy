@@ -12,7 +12,8 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class DownloadWorkerTaskTest extends Specification {
-    private static final Set<String> gradleVersions = ['4.10.2', '4.3', '4.0']
+    private static final String minimumGradleVersion = '4.3'
+    private static final Set<String> gradleVersions = ['4.10.2', minimumGradleVersion]
 
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
 
@@ -47,6 +48,54 @@ class DownloadWorkerTaskTest extends Specification {
 
         then:
         result.task(":help").outcome == SUCCESS
+
+        where:
+        gradleVersion << gradleVersions
+    }
+
+    @Unroll
+    def "timeout defaults (Gradle #gradleVersion)"() {
+        given:
+        buildFile << '''
+        plugins {
+            id 'fi.linuxbox.download.worker'
+        }
+        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+
+        task('foo', type: DownloadWorkerTask) {
+            connectTimeout 1
+            readTimeout 2
+        }
+        task('bar', type: DownloadWorkerTask) {
+        }
+        task('baz', type: DownloadWorkerTask) {
+            connectTimeout null
+            readTimeout null
+        }
+        task('test') {
+            doLast {
+                println foo.connectTimeout.get()
+                println foo.readTimeout.get()
+                println bar.connectTimeout.get()
+                println bar.readTimeout.get()
+                println baz.connectTimeout.getOrElse(4)
+                println baz.readTimeout.getOrElse(5)
+            }
+        }
+        '''
+
+        when:
+        def result = GradleRunner
+                .create()
+                .withGradleVersion(gradleVersion)
+                .withProjectDir(testProjectDir.root)
+                .withArguments('-q', 'test')
+                .withPluginClasspath()
+                .build()
+
+        then:
+        result.task(':test').outcome == SUCCESS
+        result.output == '1\n2\n30000\n30000\n4\n5\n'
 
         where:
         gradleVersion << gradleVersions
@@ -137,7 +186,7 @@ class DownloadWorkerTaskTest extends Specification {
         when:
         def result = GradleRunner
                 .create()
-                .withGradleVersion('4.0')
+                .withGradleVersion(minimumGradleVersion)
                 .withProjectDir(testProjectDir.root)
                 .withArguments("fetch")
                 .withPluginClasspath()
@@ -170,7 +219,7 @@ class DownloadWorkerTaskTest extends Specification {
         when:
         def result = GradleRunner
                 .create()
-                .withGradleVersion('4.0')
+                .withGradleVersion(minimumGradleVersion)
                 .withProjectDir(testProjectDir.root)
                 .withArguments("fetch")
                 .withPluginClasspath()
@@ -203,7 +252,7 @@ class DownloadWorkerTaskTest extends Specification {
         when:
         def result = GradleRunner
                 .create()
-                .withGradleVersion('4.0')
+                .withGradleVersion(minimumGradleVersion)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('--stacktrace', 'fetch')
                 .withPluginClasspath()
@@ -235,7 +284,7 @@ class DownloadWorkerTaskTest extends Specification {
         when:
         def result = GradleRunner
                 .create()
-                .withGradleVersion('4.0')
+                .withGradleVersion(minimumGradleVersion)
                 .withProjectDir(testProjectDir.root)
                 .withArguments("fetch")
                 .withPluginClasspath()

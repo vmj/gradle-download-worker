@@ -1,6 +1,10 @@
 package fi.linuxbox.gradle.download.worker
 
+import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
@@ -10,27 +14,39 @@ import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
 
+@CompileStatic
 class DownloadWorkerTask extends DefaultTask {
+    private final static Integer DEFAULT_CONNECT_TIMEOUT = 30_000
+    private final static Integer DEFAULT_READ_TIMEOUT = 30_000
     private final WorkerExecutor workerExecutor
 
-    private String from
-    private Object to
-    private Integer connectTimeout
-    private Integer readTimeout
+    @Input
+    final Property<String> from = project.objects.property(String)
+
+    @OutputFile
+    final RegularFileProperty to = newOutputFile()
+
+    @Internal
+    final Property<Integer> connectTimeout = project.objects.property(Integer)
+
+    @Internal
+    final Property<Integer> readTimeout = project.objects.property(Integer)
 
     @Inject
     DownloadWorkerTask(final WorkerExecutor workerExecutor) {
         this.workerExecutor = workerExecutor
+        this.connectTimeout.set(DEFAULT_CONNECT_TIMEOUT)
+        this.readTimeout.set(DEFAULT_READ_TIMEOUT)
         this.getOutputs().upToDateWhen { task -> false }
     }
 
     @TaskAction
-    void fetch() throws MalformedURLException {
+    void fetch() {
         final Params params = new Params(
-                getFrom(),
-                getTo(),
-                getConnectTimeout(),
-                getReadTimeout())
+                from.get().toURL(),
+                to.get().asFile,
+                connectTimeout.getOrElse(DEFAULT_CONNECT_TIMEOUT),
+                readTimeout.getOrElse(DEFAULT_READ_TIMEOUT))
 
         workerExecutor.submit(Download.class, { config ->
             config.setIsolationMode(IsolationMode.NONE)
@@ -38,43 +54,22 @@ class DownloadWorkerTask extends DefaultTask {
         })
     }
 
-    @Input
-    URL getFrom() {
-        try {
-            return new URL(this.from)
-        } catch (final MalformedURLException e) {
-            throw new RuntimeException("invalid 'from' URL", e)
-        }
+    void from(final String url) {
+        this.from.set(url)
     }
 
-    void setFrom(final String from) {
-        this.from = from
+    void to(final Object to) {
+        if (to instanceof Provider)
+            this.to.set(to as Provider)
+        else
+            this.to.set(project.file(to))
     }
 
-    @OutputFile
-    File getTo() {
-        return getProject().file(this.to)
+    void connectTimeout(Integer connectTimeout) {
+        this.connectTimeout.set(connectTimeout)
     }
 
-    void setTo(final Object to) {
-        this.to = to
-    }
-
-    @Internal
-    Integer getConnectTimeout() {
-        return connectTimeout != null ? connectTimeout : 30000
-    }
-
-    void setConnectTimeout(Integer connectTimeout) {
-        this.connectTimeout = connectTimeout
-    }
-
-    @Internal
-    Integer getReadTimeout() {
-        return readTimeout != null ? readTimeout : 30000
-    }
-
-    void setReadTimeout(Integer readTimeout) {
-        this.readTimeout = readTimeout
+    void readTimeout(Integer readTimeout) {
+        this.readTimeout.set(readTimeout)
     }
 }

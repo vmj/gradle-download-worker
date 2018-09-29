@@ -4,8 +4,7 @@ image:https://travis-ci.org/vmj/gradle-download-worker.svg?branch=master["Build 
 
 This Gradle plugin implements a parallel download task type.
 
-This is implemented with Gradle Worker API, so *Gradle 4.0 or newer* is required.
-Also, *Java 8* is used.
+This requires *Gradle 4.3 or newer*.
 
 ## Usage
 
