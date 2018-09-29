@@ -63,12 +63,12 @@ class Download implements Runnable {
     /**
      * Returns a configured URL connection.
      *
-     * @param url URL to open
+     * @param uri URI to open
      * @return A URL connection
      * @throws IOException in case opening the connection fails.
      */
-    private HttpURLConnection urlConnection(final URL url) throws IOException {
-        final HttpURLConnection cnx = (HttpURLConnection) url.openConnection()
+    private HttpURLConnection urlConnection(final URI uri) throws IOException {
+        final HttpURLConnection cnx = (HttpURLConnection) uri.toURL().openConnection()
 
         cnx.setAllowUserInteraction(false)
         cnx.setDoInput(true)

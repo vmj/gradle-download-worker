@@ -52,6 +52,33 @@ class DownloadWorkerTaskTest extends Specification {
         gradleVersion << gradleVersions
     }
 
+    def "Invalid from URI"() {
+        given:
+        buildFile << """
+        plugins {
+          id 'fi.linuxbox.download.worker'
+        }
+        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        task('fetch', type: DownloadWorkerTask) {
+          from 'file://foo.txt'
+          to new File(buildDir, 'foo.txt')
+        }
+        """
+
+        when:
+        def result = GradleRunner
+                .create()
+                .withGradleVersion("4.0")
+                .withProjectDir(testProjectDir.root)
+                .withArguments("fetch")
+                .withPluginClasspath()
+                .forwardOutput()
+                .buildAndFail()
+
+        then:
+        result.task(":fetch").outcome == FAILED
+    }
+
     @Unroll
     @IgnoreIf({System.getProperty('IS_OFFLINE') == '1'})
     def "can execute download (Gradle #gradleVersion)"() {
