@@ -9,6 +9,7 @@ import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class DownloadWorkerTaskTest extends Specification {
     private static final Set<String> gradleVersions = ['4.3', '4.0']
@@ -244,6 +245,83 @@ class DownloadWorkerTaskTest extends Specification {
         then:
         result.task(":fetch").outcome == FAILED
         writer.toString().contains('HTTP error: ')
+    }
+
+    @Unroll
+    @IgnoreIf({System.getProperty('IS_OFFLINE') == '1'})
+    def "Example from README (Gradle #gradleVersion)"() {
+        given:
+        buildFile << '''
+        plugins {
+          id 'fi.linuxbox.download.worker'
+        }
+        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+      
+        task downloadAll {
+          group 'My tasks'
+          description 'Download all ChangeLogs'
+        }
+      
+        ext {
+          distroNames = ['slackware64']
+          distroVersions = ['14.2']
+        }
+      
+        distroNames.each { distroName ->
+          distroVersions.each { distroVersion ->
+            def distro = "$distroName-$distroVersion"
+            def path = "$distroName/$distroVersion"
+      
+            // Define a parallel download task for this distro version
+            def download = task("download-$distro-changelog", type: DownloadWorkerTask) {
+              from "http://ftp.osuosl.org/pub/slackware/$distro/ChangeLog.txt"
+              to new File(buildDir, "changelogs/$path/ChangeLog.txt")
+            }
+      
+            // Just to demo the UP-TO-DATE functionality:
+            // even though the download task does some work (conditional GET)
+            // it doesn't necessarily touch the artifact.
+            // That allows Gradle to skip the copy task.
+            def copy = task("copy-$distro-changelog", type: Copy) {
+              from download
+              into new File(buildDir, "copies/$path/")
+            }
+      
+            downloadAll.dependsOn copy
+          }
+        }
+        '''
+
+        when:
+        def result = GradleRunner
+                .create()
+                .withGradleVersion(gradleVersion)
+                .withProjectDir(testProjectDir.root)
+                .withArguments("downloadAll")
+                .withPluginClasspath()
+                .build()
+
+        then:
+        result.task(":downloadAll").outcome == SUCCESS
+        result.task(":download-slackware64-14.2-changelog").outcome == SUCCESS
+        result.task(":copy-slackware64-14.2-changelog").outcome == SUCCESS
+
+        when:
+        result = GradleRunner
+                .create()
+                .withGradleVersion(gradleVersion)
+                .withProjectDir(testProjectDir.root)
+                .withArguments("downloadAll")
+                .withPluginClasspath()
+                .build()
+
+        then:
+        result.task(":downloadAll").outcome == UP_TO_DATE
+        result.task(":download-slackware64-14.2-changelog").outcome == SUCCESS
+        result.task(":copy-slackware64-14.2-changelog").outcome == UP_TO_DATE
+
+        where:
+        gradleVersion << gradleVersions
     }
 
     def projectFile(String path) {
