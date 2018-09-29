@@ -12,7 +12,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class DownloadWorkerTaskTest extends Specification {
-    private static final Set<String> gradleVersions = ['4.3', '4.0']
+    private static final Set<String> gradleVersions = ['4.10.2', '4.3', '4.0']
 
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
 
