@@ -1,7 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.10.0'
     id 'org.unbroken-dome.test-sets' version '1.5.1'
-    id 'com.gradle.plugin-publish' version '0.9.7'
     id "com.bmuschko.nexus" version "2.3.1"
 }
 apply plugin: 'groovy'
@@ -69,6 +69,7 @@ dependencies {
     }
 }
 
+// configure java-gradle-plugin plugin
 gradlePlugin {
     testSourceSets sourceSets.functionalTest
 
@@ -80,6 +81,7 @@ gradlePlugin {
     }
 }
 
+// configure plugin-publish plugin
 pluginBundle {
     website = 'https://github.com/vmj/gradle-download-worker'
     vcsUrl = 'https://github.com/vmj/gradle-download-worker'
