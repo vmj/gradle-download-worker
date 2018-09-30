@@ -76,7 +76,7 @@ gradlePlugin {
     plugins {
         "DownloadPlugin" {
             id = pluginId
-            implementationClass = "fi.linuxbox.gradle.download.worker.DownloadWorkerPlugin"
+            implementationClass = "fi.linuxbox.gradle.download.DownloadWorkerPlugin"
         }
     }
 }

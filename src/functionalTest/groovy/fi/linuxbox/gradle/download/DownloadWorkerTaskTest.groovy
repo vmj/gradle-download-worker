@@ -1,4 +1,4 @@
-package fi.linuxbox.gradle.download.worker
+package fi.linuxbox.gradle.download
 
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
@@ -30,7 +30,7 @@ class DownloadWorkerTaskTest extends Specification {
         plugins {
           id 'fi.linuxbox.download'
         }
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
         task('fetch-Slackware64-13.0', type: DownloadWorkerTask) {
           from 'http://ftp.osuosl.org/pub/slackware/slackware-13.0/ChangeLog.txt'
           to new File(buildDir, 'changelogs/slackware/13.0/ChangeLog.txt')
@@ -60,7 +60,7 @@ class DownloadWorkerTaskTest extends Specification {
         plugins {
             id 'fi.linuxbox.download'
         }
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
 
         task('foo', type: DownloadWorkerTask) {
             connectTimeout 1
@@ -109,7 +109,7 @@ class DownloadWorkerTaskTest extends Specification {
         plugins {
           id 'fi.linuxbox.download'
         }
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
       
         task("my-download", type: DownloadWorkerTask) {
           from 'https://www.google.com/robots.txt'
@@ -142,7 +142,7 @@ class DownloadWorkerTaskTest extends Specification {
         plugins {
           id 'fi.linuxbox.download'
         }
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
         task('fetch-Slackware64-13.0', type: DownloadWorkerTask) {
           def v = '13.0'
           from "http://ftp.osuosl.org/pub/slackware/slackware-\$v/ChangeLog.txt"
@@ -174,7 +174,7 @@ class DownloadWorkerTaskTest extends Specification {
         plugins {
           id 'fi.linuxbox.download'
         }
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
         task('fetch', type: DownloadWorkerTask) {
           from 'http://no.such.site.com/foo.txt'
           to "\$buildDir/foo.txt"
@@ -206,7 +206,7 @@ class DownloadWorkerTaskTest extends Specification {
         plugins {
           id 'fi.linuxbox.download'
         }
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
         task('fetch', type: DownloadWorkerTask) {
           from 'http://www.linuxbox.fi/robots.txt'
           to "\$buildDir/foo.txt"
@@ -239,7 +239,7 @@ class DownloadWorkerTaskTest extends Specification {
         plugins {
           id 'fi.linuxbox.download'
         }
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
         task('fetch', type: DownloadWorkerTask) {
           from 'https://www.google.com/robots.txt'
           to "\$buildDir/foo.txt"
@@ -272,7 +272,7 @@ class DownloadWorkerTaskTest extends Specification {
         plugins {
           id 'fi.linuxbox.download'
         }
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
         task('fetch', type: DownloadWorkerTask) {
           from 'http://www.linuxbox.fi/no-such-file.txt'
           to "\$buildDir/foo.txt"
@@ -305,7 +305,7 @@ class DownloadWorkerTaskTest extends Specification {
             id 'fi.linuxbox.download'
         }
         
-        import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+        import fi.linuxbox.gradle.download.DownloadWorkerTask
       
         task downloadAll {
             group 'My tasks'

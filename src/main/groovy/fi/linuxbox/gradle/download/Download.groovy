@@ -1,4 +1,4 @@
-package fi.linuxbox.gradle.download.worker
+package fi.linuxbox.gradle.download
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j

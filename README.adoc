@@ -10,9 +10,10 @@ This plugin requires *Gradle 4.3 or newer*.
 
 [NOTE]
 ====
-Version 0.5 has the following breaking changes:
+Version 0.5 drops the word `worker` from many places, which is a breaking change:
 
 * the plugin ID changed from `fi.linuxbox.download.worker` to `fi.linuxbox.download`
+* the implementation package changed from `fi.linuxbox.gradle.download.worker` to `fi.linuxbox.gradle.download`
 ====
 
 
@@ -26,7 +27,7 @@ plugins {
     id 'fi.linuxbox.download' version '0.5'
 }
 
-import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+import fi.linuxbox.gradle.download.DownloadWorkerTask
 
 task("my-download", type: DownloadWorkerTask) {
     from 'https://www.google.com/robots.txt'
@@ -42,7 +43,7 @@ plugins {
     id 'fi.linuxbox.download' version '0.5'
 }
 
-import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+import fi.linuxbox.gradle.download.DownloadWorkerTask
 
 task downloadAll {
     group 'My tasks'

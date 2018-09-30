@@ -1,4 +1,4 @@
-package fi.linuxbox.gradle.download.worker
+package fi.linuxbox.gradle.download
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
