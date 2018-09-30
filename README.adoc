@@ -1,54 +1,56 @@
 image:https://travis-ci.org/vmj/gradle-download-worker.svg?branch=master["Build Status", link="https://travis-ci.org/vmj/gradle-download-worker"]
 
-# A parallel download task type for Gradle
+= A parallel download task type for Gradle
 
 This Gradle plugin implements a parallel download task type.
 
 This requires *Gradle 4.3 or newer*.
 
-## Usage
+== Usage
 
 Basic usage is as follows:
 
-```
-  plugins {
+[source,groovy]
+----
+plugins {
     id 'fi.linuxbox.download.worker' version "0.3"
-  }
-  import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+}
+import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
 
-  task("my-download", type: DownloadWorkerTask) {
+task("my-download", type: DownloadWorkerTask) {
     from 'https://www.google.com/robots.txt'
     to "$buildDir/robots.txt"
-  }
-```
+}
+----
 
 A more interesting example:
 
-```
-  plugins {
+[source,groovy]
+----
+plugins {
     id 'fi.linuxbox.download.worker' version "0.3"
-  }
-  import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
+}
+import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
 
-  task downloadAll {
+task downloadAll {
     group 'My tasks'
     description 'Download all ChangeLogs'
-  }
+}
 
-  ext {
+ext {
     distroNames = ['slackware', 'slackware64']
     distroVersions = ['13.0', '13.1', '13.37', '14.0', '14.1', '14.2']
-  }
+}
 
-  distroNames.each { distroName ->
+distroNames.each { distroName ->
     distroVersions.each { distroVersion ->
       def distro = "$distroName-$distroVersion"
       def path = "$distroName/$distroVersion"
 
       // Define a parallel download task for this distro version
       def download = task("download-$distro-changelog", type: DownloadWorkerTask) {
-        from "http://ftp.osuosl.org/pub/slackware/$distro/ChangeLog.txt"
-        to new File(buildDir, "changelogs/$path/ChangeLog.txt")
+          from "http://ftp.osuosl.org/pub/slackware/$distro/ChangeLog.txt"
+          to new File(buildDir, "changelogs/$path/ChangeLog.txt")
       }
 
       // Just to demo the UP-TO-DATE functionality:
@@ -56,14 +58,15 @@ A more interesting example:
       // it doesn't necessarily touch the artifact.
       // That allows Gradle to skip the copy task.
       def copy = task("copy-$distro-changelog", type: Copy) {
-        from download
-        into new File(buildDir, "copies/$path/")
+          from download
+          into new File(buildDir, "copies/$path/")
       }
 
       downloadAll.dependsOn copy
     }
-  }
-```
+}
+----
+
 
 With above build script, the first run of `gradle downloadAll` would download
 the ChangeLog files in parallel.  Then it would copy each ChangeLog as
@@ -74,11 +77,28 @@ as the download task will make a conditional HTTP GET and,
 since the ChangeLogs will not be updated,
 copy tasks will report UP-TO-DATE.
 
-## Task Configuration
+== Task Configuration
 
-In addition to the mandatory `from` (HTTP(S) URL) and `to` (anything that can be interpreted by project
-`file` method, following optional properties can be set:
+This download task can be configured with the following properties:
 
- * connectTimeout: Defaults to 30 seconds; specified in milliseconds
- * readTimeout: Defaults to 30 seconds; specified in milliseconds
+.Configuration properties
+[cols="2,2,6"]
+|===
+|Property | Default | Description
+
+|`from` | -
+| The HTTP or HTTPS URL from which to download.  This is mandatory
+
+|`to` | -
+| Destination file.  This is mandatory, and can be anything that is understood by the
+https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:file(java.lang.Object)[Project.file(path)]
+method.
+
+|`connectTimeout` | 30000 (30 seconds)
+|Milliseconds before timing out the connection attempt. Set to zero to disable the timeout (infinite timeout).
+
+|`readTimeout` | 30000 (30 seconds)
+|Milliseconds before timing out the socket reading. Set to zero to disable the timeout (infinite timeout).
+
+|===
 
