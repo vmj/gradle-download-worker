@@ -54,7 +54,7 @@ And a Maven equivalent is:
 <dependency>
   <groupId>fi.linuxbox.gradle</groupId>
   <artifactId>gradle-download</artifactId>
-  <version>0.4</version>
+  <version>0.5</version>
 </dependency>
 ----
 
