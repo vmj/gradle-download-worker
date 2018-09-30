@@ -16,7 +16,7 @@ ext {
 modifyPom {
     project {
         name 'gradle-download'
-        description 'Parallel Download Gradle plugin'
+        description 'This plugin provides a Download task type for Gradle.  Tasks of this type can do HTTP and HTTPS downloads in parallel.'
         url 'https://github.com/vmj/gradle-download-worker'
 
         licenses {
@@ -89,8 +89,8 @@ pluginBundle {
     plugins {
         "DownloadPlugin" {
             id = pluginId
-            displayName = "Parallel Download Gradle plugin"
-            description = "Parallel Download Gradle plugin."
+            displayName = "Parallel Download Task Type for Gradle"
+            description = "This plugin provides a Download task type for Gradle.  Tasks of this type can do HTTP and HTTPS downloads in parallel."
             tags = ['download', 'task', 'url', 'http', 'https']
         }
     }
