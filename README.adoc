@@ -14,6 +14,7 @@ Version 0.5 drops the word `worker` from many places, which is a breaking change
 
 * the plugin ID changed from `fi.linuxbox.download.worker` to `fi.linuxbox.download`
 * the implementation package changed from `fi.linuxbox.gradle.download.worker` to `fi.linuxbox.gradle.download`
+* the plugin class name changed from `DownloadWorkerPlugin` to `DownloadPlugin`
 ====
 
 
