@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'groovy'
 
 group 'fi.linuxbox.gradle'
-version '0.4'
+version '0.5-SNAPSHOT'
 ext {
     pluginId = "fi.linuxbox.download.worker"
     spockGroovyVer = GroovySystem.version.replaceAll(/\.\d+$/,'')
