@@ -9,14 +9,14 @@ apply plugin: 'groovy'
 group 'fi.linuxbox.gradle'
 version '0.5-SNAPSHOT'
 ext {
-    pluginId = "fi.linuxbox.download.worker"
+    pluginId = "fi.linuxbox.download"
     spockGroovyVer = GroovySystem.version.replaceAll(/\.\d+$/,'')
 }
 
 modifyPom {
     project {
-        name 'gradle-download-worker'
-        description 'Parallel Download Worker Gradle plugin'
+        name 'gradle-download'
+        description 'Parallel Download Gradle plugin'
         url 'https://github.com/vmj/gradle-download-worker'
 
         licenses {
@@ -74,7 +74,7 @@ gradlePlugin {
     testSourceSets sourceSets.functionalTest
 
     plugins {
-        "DownloadWorkerPlugin" {
+        "DownloadPlugin" {
             id = pluginId
             implementationClass = "fi.linuxbox.gradle.download.worker.DownloadWorkerPlugin"
         }
@@ -87,11 +87,11 @@ pluginBundle {
     vcsUrl = 'https://github.com/vmj/gradle-download-worker'
 
     plugins {
-        "DownloadWorkerPlugin" {
+        "DownloadPlugin" {
             id = pluginId
-            displayName = "Parallel Download Worker Gradle plugin"
-            description = "Parallel Download Worker Gradle plugin. Only for Java >=8 and Gradle >=4.0"
-            tags = ['download', 'worker']
+            displayName = "Parallel Download Gradle plugin"
+            description = "Parallel Download Gradle plugin."
+            tags = ['download', 'task', 'url', 'http', 'https']
         }
     }
 }

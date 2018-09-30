@@ -8,6 +8,14 @@ The releases are available via *Maven Central*, *Bintray*, and Gradle *Plugin Po
 
 This plugin requires *Gradle 4.3 or newer*.
 
+[NOTE]
+====
+Version 0.5 has the following breaking changes:
+
+* the plugin ID changed from `fi.linuxbox.download.worker` to `fi.linuxbox.download`
+====
+
+
 == Usage
 
 Basic usage is as follows:
@@ -15,7 +23,7 @@ Basic usage is as follows:
 [source,groovy]
 ----
 plugins {
-    id 'fi.linuxbox.download.worker' version '0.4'
+    id 'fi.linuxbox.download' version '0.5'
 }
 
 import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
@@ -31,7 +39,7 @@ A more interesting example:
 [source,groovy]
 ----
 plugins {
-    id 'fi.linuxbox.download.worker' version '0.4'
+    id 'fi.linuxbox.download' version '0.5'
 }
 
 import fi.linuxbox.gradle.download.worker.DownloadWorkerTask

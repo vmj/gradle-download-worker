@@ -8,6 +8,6 @@ class DownloadWorkerPluginTest {
     @Test
     void testApply() {
         final Project project = ProjectBuilder.builder().build()
-        project.pluginManager.apply("fi.linuxbox.download.worker")
+        project.pluginManager.apply("fi.linuxbox.download")
     }
 }

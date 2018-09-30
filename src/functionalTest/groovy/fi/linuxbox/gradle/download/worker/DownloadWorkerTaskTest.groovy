@@ -28,7 +28,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << """
         plugins {
-          id 'fi.linuxbox.download.worker'
+          id 'fi.linuxbox.download'
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
         task('fetch-Slackware64-13.0', type: DownloadWorkerTask) {
@@ -58,7 +58,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << '''
         plugins {
-            id 'fi.linuxbox.download.worker'
+            id 'fi.linuxbox.download'
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
 
@@ -107,7 +107,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << """
         plugins {
-          id 'fi.linuxbox.download.worker'
+          id 'fi.linuxbox.download'
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
       
@@ -140,7 +140,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << """
         plugins {
-          id 'fi.linuxbox.download.worker'
+          id 'fi.linuxbox.download'
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
         task('fetch-Slackware64-13.0', type: DownloadWorkerTask) {
@@ -172,7 +172,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << """
         plugins {
-          id 'fi.linuxbox.download.worker'
+          id 'fi.linuxbox.download'
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
         task('fetch', type: DownloadWorkerTask) {
@@ -204,7 +204,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << """
         plugins {
-          id 'fi.linuxbox.download.worker'
+          id 'fi.linuxbox.download'
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
         task('fetch', type: DownloadWorkerTask) {
@@ -237,7 +237,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << """
         plugins {
-          id 'fi.linuxbox.download.worker'
+          id 'fi.linuxbox.download'
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
         task('fetch', type: DownloadWorkerTask) {
@@ -270,7 +270,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << """
         plugins {
-          id 'fi.linuxbox.download.worker'
+          id 'fi.linuxbox.download'
         }
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
         task('fetch', type: DownloadWorkerTask) {
@@ -302,7 +302,7 @@ class DownloadWorkerTaskTest extends Specification {
         given:
         buildFile << '''
         plugins {
-            id 'fi.linuxbox.download.worker'
+            id 'fi.linuxbox.download'
         }
         
         import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
