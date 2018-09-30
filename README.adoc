@@ -13,8 +13,9 @@ Basic usage is as follows:
 [source,groovy]
 ----
 plugins {
-    id 'fi.linuxbox.download.worker' version "0.3"
+    id 'fi.linuxbox.download.worker' version '0.3'
 }
+
 import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
 
 task("my-download", type: DownloadWorkerTask) {
@@ -28,8 +29,9 @@ A more interesting example:
 [source,groovy]
 ----
 plugins {
-    id 'fi.linuxbox.download.worker' version "0.3"
+    id 'fi.linuxbox.download.worker' version '0.3'
 }
+
 import fi.linuxbox.gradle.download.worker.DownloadWorkerTask
 
 task downloadAll {
@@ -38,35 +40,35 @@ task downloadAll {
 }
 
 ext {
+    mirror = 'http://ftp.osuosl.org/pub/slackware'
     distroNames = ['slackware', 'slackware64']
     distroVersions = ['13.0', '13.1', '13.37', '14.0', '14.1', '14.2']
 }
 
-distroNames.each { distroName ->
-    distroVersions.each { distroVersion ->
-      def distro = "$distroName-$distroVersion"
-      def path = "$distroName/$distroVersion"
+distroNames.each { final distroName ->
+    distroVersions.each { final distroVersion ->
+        final distro = "$distroName-$distroVersion"
+        final path = "$distroName/$distroVersion"
 
-      // Define a parallel download task for this distro version
-      def download = task("download-$distro-changelog", type: DownloadWorkerTask) {
-          from "http://ftp.osuosl.org/pub/slackware/$distro/ChangeLog.txt"
-          to new File(buildDir, "changelogs/$path/ChangeLog.txt")
-      }
+        // Define a parallel download task for this distro version
+        final download = task("download-$distro-changelog", type: DownloadWorkerTask) {
+            from "$mirror/$distro/ChangeLog.txt"
+            to project.layout.buildDirectory.file("changelogs/$path/ChangeLog.txt")
+        }
 
-      // Just to demo the UP-TO-DATE functionality:
-      // even though the download task does some work (conditional GET)
-      // it doesn't necessarily touch the artifact.
-      // That allows Gradle to skip the copy task.
-      def copy = task("copy-$distro-changelog", type: Copy) {
-          from download
-          into new File(buildDir, "copies/$path/")
-      }
+        // Just to demo the UP-TO-DATE functionality:
+        // even though the download task does some work (conditional GET)
+        // it doesn't necessarily touch the artifact.
+        // That allows Gradle to skip the copy task.
+        final copy = task("copy-$distro-changelog", type: Copy) {
+            from download
+            into project.layout.buildDirectory.dir("copies/$path/")
+        }
 
-      downloadAll.dependsOn copy
+        downloadAll.dependsOn copy
     }
 }
 ----
-
 
 With above build script, the first run of `gradle downloadAll` would download
 the ChangeLog files in parallel.  Then it would copy each ChangeLog as
