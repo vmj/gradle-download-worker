@@ -15,7 +15,7 @@ import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
 @CompileStatic
-class DownloadWorkerTask extends DefaultTask {
+class Download extends DefaultTask {
     private final static Integer DEFAULT_CONNECT_TIMEOUT = 30_000
     private final static Integer DEFAULT_READ_TIMEOUT = 30_000
     private final WorkerExecutor workerExecutor
@@ -33,7 +33,7 @@ class DownloadWorkerTask extends DefaultTask {
     final Property<Integer> readTimeout = project.objects.property(Integer)
 
     @Inject
-    DownloadWorkerTask(final WorkerExecutor workerExecutor) {
+    Download(final WorkerExecutor workerExecutor) {
         this.workerExecutor = workerExecutor
         this.connectTimeout.set(DEFAULT_CONNECT_TIMEOUT)
         this.readTimeout.set(DEFAULT_READ_TIMEOUT)
