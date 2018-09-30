@@ -4,7 +4,10 @@ image:https://travis-ci.org/vmj/gradle-download-worker.svg?branch=master["Build 
 
 This Gradle plugin implements a parallel download task type.
 
-The releases are available via *Maven Central*, *Bintray*, and Gradle *Plugin Portal*.
+The releases are available via
+https://search.maven.org/artifact/fi.linuxbox.gradle/gradle-download/0.5/jar[Maven Central],
+https://bintray.com/bintray/jcenter/fi.linuxbox.gradle%3Agradle-download[Bintray], and
+https://plugins.gradle.org/plugin/fi.linuxbox.download[Gradle Plugin Portal].
 
 This plugin requires *Gradle 4.3 or newer*.
 
