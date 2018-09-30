@@ -51,10 +51,8 @@ repositories {
 }
 
 testSets {
-    integrationTest
     functionalTest
 }
-check.dependsOn integrationTest
 check.dependsOn functionalTest
 
 functionalTest {
