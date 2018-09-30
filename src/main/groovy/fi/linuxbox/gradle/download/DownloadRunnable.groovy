@@ -7,11 +7,11 @@ import javax.inject.Inject
 
 @Slf4j
 @CompileStatic
-class Download implements Runnable {
+class DownloadRunnable implements Runnable {
     private final Params params
 
     @Inject
-    Download(final Params params) {
+    DownloadRunnable(final Params params) {
         this.params = params
     }
 

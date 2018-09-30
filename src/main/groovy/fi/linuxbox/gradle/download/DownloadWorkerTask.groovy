@@ -48,7 +48,7 @@ class DownloadWorkerTask extends DefaultTask {
                 connectTimeout.getOrElse(DEFAULT_CONNECT_TIMEOUT),
                 readTimeout.getOrElse(DEFAULT_READ_TIMEOUT))
 
-        workerExecutor.submit(Download.class) { final config ->
+        workerExecutor.submit(DownloadRunnable.class) { final config ->
             config.setIsolationMode(IsolationMode.NONE)
             config.setParams(params)
         }
