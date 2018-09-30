@@ -33,6 +33,28 @@ In addition, the plugin class name changed from `DownloadWorkerPlugin` to `Downl
 This is relevant if you are applying the plugin via
 https://docs.gradle.org/current/javadoc/org/gradle/api/plugins/PluginContainer.html#apply-java.lang.Class-[PluginContainer.apply(Class)]
 method.
+
+In case you are using this project as a library dependency, the artifact ID changed from `gradle-download-worker` to
+`gradle-download`. In Gradle, that would look like:
+
+[source,groovy]
+----
+dependencies {
+    compile 'fi.linuxbox.gradle:gradle-download:0.5'
+}
+----
+
+And a Maven equivalent is:
+
+[source,xml]
+----
+<dependency>
+  <groupId>fi.linuxbox.gradle</groupId>
+  <artifactId>gradle-download</artifactId>
+  <version>0.4</version>
+</dependency>
+----
+
 ====
 
 
