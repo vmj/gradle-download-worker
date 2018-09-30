@@ -4,7 +4,9 @@ image:https://travis-ci.org/vmj/gradle-download-worker.svg?branch=master["Build 
 
 This Gradle plugin implements a parallel download task type.
 
-This requires *Gradle 4.3 or newer*.
+The releases are available via *Maven Central*, *Bintray*, and Gradle *Plugin Portal*.
+
+This plugin requires *Gradle 4.3 or newer*.
 
 == Usage
 
