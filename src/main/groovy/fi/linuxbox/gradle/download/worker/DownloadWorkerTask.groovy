@@ -48,10 +48,10 @@ class DownloadWorkerTask extends DefaultTask {
                 connectTimeout.getOrElse(DEFAULT_CONNECT_TIMEOUT),
                 readTimeout.getOrElse(DEFAULT_READ_TIMEOUT))
 
-        workerExecutor.submit(Download.class, { config ->
+        workerExecutor.submit(Download.class) { final config ->
             config.setIsolationMode(IsolationMode.NONE)
             config.setParams(params)
-        })
+        }
     }
 
     void from(final String url) {
@@ -65,11 +65,11 @@ class DownloadWorkerTask extends DefaultTask {
             this.to.set(project.file(to))
     }
 
-    void connectTimeout(Integer connectTimeout) {
+    void connectTimeout(final Integer connectTimeout) {
         this.connectTimeout.set(connectTimeout)
     }
 
-    void readTimeout(Integer readTimeout) {
+    void readTimeout(final Integer readTimeout) {
         this.readTimeout.set(readTimeout)
     }
 }

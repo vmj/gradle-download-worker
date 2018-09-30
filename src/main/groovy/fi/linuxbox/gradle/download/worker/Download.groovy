@@ -1,13 +1,13 @@
 package fi.linuxbox.gradle.download.worker
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 import javax.inject.Inject
 
+@Slf4j
+@CompileStatic
 class Download implements Runnable {
-    private final Logger log = LoggerFactory.getLogger(Download.class)
-
     private final Params params
 
     @Inject
@@ -19,29 +19,29 @@ class Download implements Runnable {
     void run() {
         try {
             fetch()
-        } catch (UnknownHostException e) {
-            throw new RuntimeException("unknown host: " + e.getMessage(), e)
-        } catch (SocketTimeoutException e) {
-            throw new RuntimeException(e.getMessage(), e)
-        } catch (IOException e) {
+        } catch (final UnknownHostException e) {
+            throw new RuntimeException("unknown host: ${e.message}", e)
+        } catch (final SocketTimeoutException e) {
+            throw new RuntimeException(e.message, e)
+        } catch (final IOException e) {
             throw new RuntimeException("download failed", e)
         }
     }
 
     private void fetch() throws IOException {
-        final HttpURLConnection cnx = urlConnection(params.getFrom())
+        final HttpURLConnection cnx = urlConnection(params.from)
 
-        if (params.getTo().exists())
-            cnx.setIfModifiedSince(params.getTo().lastModified())
+        if (params.to.exists())
+            cnx.ifModifiedSince = params.to.lastModified()
 
         cnx.connect() // both timeouts thrown from here
 
-        final int responseCode = cnx.getResponseCode()
+        final int responseCode = cnx.responseCode
 
-        logHeaders(cnx.getHeaderFields())
+        logHeaders(cnx.headerFields)
 
         if (responseCode >= 400) {
-            throw new RuntimeException("HTTP error: " + responseCode)
+            throw new RuntimeException("HTTP error: $responseCode")
         }
         if (responseCode >= 300) {
             // as long as we don't touch the output file,
@@ -54,9 +54,13 @@ class Download implements Runnable {
             return
         }
 
-        write(cnx.getInputStream(), new FileOutputStream(params.getTo()), cnx.getContentLengthLong())
+        cnx.inputStream.with { final inputStream ->
+            params.to.newOutputStream().with { final outputStream ->
+                outputStream << inputStream
+            }
+        }
 
-        if (!params.getTo().setLastModified(cnx.getLastModified()))
+        if (!params.to.setLastModified(cnx.lastModified))
             log.warn("unable to set modification time; up-to-date checks may not work")
     }
 
@@ -70,56 +74,25 @@ class Download implements Runnable {
     private HttpURLConnection urlConnection(final URL url) throws IOException {
         final HttpURLConnection cnx = (HttpURLConnection) url.openConnection()
 
-        cnx.setAllowUserInteraction(false)
-        cnx.setDoInput(true)
-        cnx.setDoOutput(false)
-        cnx.setUseCaches(true)
+        cnx.allowUserInteraction = false
+        cnx.doInput = true
+        cnx.doOutput = false
+        cnx.useCaches = true
 
-        cnx.setConnectTimeout(params.getConnectTimeout())
-        cnx.setReadTimeout(params.getReadTimeout())
+        cnx.connectTimeout = params.connectTimeout
+        cnx.readTimeout = params.readTimeout
 
         return cnx
     }
 
-    private void write(final InputStream inputStream,
-                       final OutputStream outStream,
-                       final long contentLength) throws IOException {
-        byte[] buffer = new byte[contentLength > 0 ? (int)(contentLength % Integer.MAX_VALUE) : 256 * 1024]
-        int bytesRead
-        int totalRead = 0
-        int totalWritten = 0
-        try {
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                totalRead += bytesRead
-                outStream.write(buffer, 0, bytesRead)
-                totalWritten += bytesRead
-            }
-        } finally {
-            if (contentLength > 0 && contentLength != totalWritten) {
-                log.warn("closing streams before full write: content " + contentLength + ", r:" + totalRead + "/w:" + totalWritten + " (bytes)")
-            }
-            try {
-                inputStream.close()
-            } catch (final IOException e) {
-                log.warn("unable to close response stream")
-            }
-            try {
-                outStream.close()
-            } catch (final IOException e) {
-                log.warn("unable to close file stream")
-            }
+    private static void logHeaders(final Map<String, List<String>> headerFields) {
+        // Non-standard map implementation: allows null key
+        headerFields.get(null).each {
+            log.debug("> $it")
         }
-    }
-
-    private void logHeaders(final Map<String, List<String>> headerFields) {
-        for (final String headerValue : headerFields.get(null)) {
-            log.debug("> " + headerValue)
-        }
-        for (final String headerField : headerFields.keySet()) {
-            if (headerField != null) {
-                for (final String headerValue : headerFields.get(headerField)) {
-                    log.debug("> " + headerField + ": " + headerValue)
-                }
+        headerFields.keySet().each { final headerField ->
+            headerFields.get(headerField).each { final headerValue ->
+                log.debug("> $headerField: $headerValue")
             }
         }
     }
