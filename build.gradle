@@ -1,10 +1,16 @@
 plugins {
+    id 'com.gradle.build-scan' version '1.16'
+    id 'groovy'
     id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version '0.10.0'
     id 'org.unbroken-dome.test-sets' version '1.5.1'
     id "com.bmuschko.nexus" version "2.3.1"
 }
-apply plugin: 'groovy'
+
+buildScan {
+    termsOfServiceUrl   = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
 
 group 'fi.linuxbox.gradle'
 version '0.6-SNAPSHOT'
