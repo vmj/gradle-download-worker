@@ -12,8 +12,8 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class DownloadTest extends Specification {
-    private static final String minimumGradleVersion = '4.3'
-    private static final Set<String> gradleVersions = ['4.10.2', minimumGradleVersion]
+    private static final String minimumGradleVersion = '5.0'
+    private static final Set<String> gradleVersions = ['6.0.1', minimumGradleVersion]
 
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
 
@@ -190,7 +190,7 @@ class DownloadTest extends Specification {
                 .withProjectDir(testProjectDir.root)
                 .withArguments("fetch")
                 .withPluginClasspath()
-                .forwardStdError(writer)
+                .forwardStdOutput(writer)
                 .buildAndFail()
 
         then:
@@ -223,7 +223,7 @@ class DownloadTest extends Specification {
                 .withProjectDir(testProjectDir.root)
                 .withArguments("fetch")
                 .withPluginClasspath()
-                .forwardStdError(writer)
+                .forwardStdOutput(writer)
                 //.withDebug(true)
                 .buildAndFail()
 
@@ -256,7 +256,7 @@ class DownloadTest extends Specification {
                 .withProjectDir(testProjectDir.root)
                 .withArguments('--stacktrace', 'fetch')
                 .withPluginClasspath()
-                .forwardStdError(writer)
+                .forwardStdOutput(writer)
                 //.withDebug(true)
                 .buildAndFail()
 
@@ -288,7 +288,7 @@ class DownloadTest extends Specification {
                 .withProjectDir(testProjectDir.root)
                 .withArguments("fetch")
                 .withPluginClasspath()
-                .forwardStdError(writer)
+                .forwardStdOutput(writer)
                 .buildAndFail()
 
         then:
