@@ -24,7 +24,7 @@ class Download extends DefaultTask {
     final Property<String> from = project.objects.property(String)
 
     @OutputFile
-    final RegularFileProperty to = newOutputFile()
+    final RegularFileProperty to = project.objects.fileProperty()
 
     @Internal
     final Property<Integer> connectTimeout = project.objects.property(Integer)
