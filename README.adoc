@@ -9,7 +9,7 @@ https://search.maven.org/artifact/fi.linuxbox.gradle/gradle-download/0.5/jar[Mav
 https://bintray.com/bintray/jcenter/fi.linuxbox.gradle%3Agradle-download[Bintray], and
 https://plugins.gradle.org/plugin/fi.linuxbox.download[Gradle Plugin Portal].
 
-This plugin requires *Gradle 4.3 or newer*.
+This plugin requires *Gradle 5.0 or newer*.
 
 [NOTE]
 ====
