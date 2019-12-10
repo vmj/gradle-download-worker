@@ -86,13 +86,17 @@ class DownloadRunnable implements Runnable {
     }
 
     private static void logHeaders(final Map<String, List<String>> headerFields) {
-        // Non-standard map implementation: allows null key
+        // Non-standard map implementation: allows null key.
+        // It returns the response line (e.g. "HTTP/1.1 200 OK").
         headerFields.get(null).each {
-            log.debug("> $it")
+            log.debug "> $it"
         }
-        headerFields.keySet().each { final headerField ->
-            headerFields.get(headerField).each { final headerValue ->
-                log.debug("> $headerField: $headerValue")
+        headerFields.forEach { final header, final values ->
+            if(!header)
+                return // Don't print the response line again
+            values.each {
+                log.debug "> $header: $it"
+
             }
         }
     }

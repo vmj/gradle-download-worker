@@ -2,35 +2,14 @@ package fi.linuxbox.gradle.download
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import groovy.transform.TupleConstructor
 
 @PackageScope
 @CompileStatic
+@TupleConstructor
 class Params implements Serializable {
-    private final URL from
-    private final File to
-    private final int connectTimeout
-    private final int readTimeout
-
-    Params(final URL from, final File to, int connectTimeout, int readTimeout) {
-        this.from = from
-        this.to = to
-        this.connectTimeout = connectTimeout
-        this.readTimeout = readTimeout
-    }
-
-    URL getFrom() {
-        return from
-    }
-
-    File getTo() {
-        return to
-    }
-
-    int getConnectTimeout() {
-        return connectTimeout
-    }
-
-    int getReadTimeout() {
-        return readTimeout
-    }
+    final URL from
+    final File to
+    final int connectTimeout
+    final int readTimeout
 }

@@ -9,10 +9,11 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
+
+import static org.gradle.workers.IsolationMode.NONE
 
 @CompileStatic
 class Download extends DefaultTask {
@@ -37,7 +38,7 @@ class Download extends DefaultTask {
         this.workerExecutor = workerExecutor
         this.connectTimeout.set(DEFAULT_CONNECT_TIMEOUT)
         this.readTimeout.set(DEFAULT_READ_TIMEOUT)
-        this.getOutputs().upToDateWhen { task -> false }
+        this.outputs.upToDateWhen { false }
     }
 
     @TaskAction
@@ -48,8 +49,8 @@ class Download extends DefaultTask {
                 connectTimeout.getOrElse(DEFAULT_CONNECT_TIMEOUT),
                 readTimeout.getOrElse(DEFAULT_READ_TIMEOUT))
 
-        workerExecutor.submit(DownloadRunnable.class) { final config ->
-            config.setIsolationMode(IsolationMode.NONE)
+        workerExecutor.submit(DownloadRunnable) { final config ->
+            config.setIsolationMode(NONE)
             config.setParams(params)
         }
     }
