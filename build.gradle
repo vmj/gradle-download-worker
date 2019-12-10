@@ -4,7 +4,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version '0.10.1'
     id 'org.unbroken-dome.test-sets' version '2.2.1'
-    id "com.bmuschko.nexus" version "2.3.1"
+    id 'maven-publish'
 }
 
 buildScan {
@@ -19,33 +19,54 @@ ext {
     spockGroovyVer = GroovySystem.version.replaceAll(/\.\d+$/,'')
 }
 
-modifyPom {
-    project {
-        name 'gradle-download'
-        description 'This plugin provides a Download task type for Gradle.  Tasks of this type can do HTTP and HTTPS downloads in parallel.'
-        url 'https://github.com/vmj/gradle-download-worker'
+final sourceJar = tasks.register("publishPluginSourcesJar", Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
+    // classifier changes to archiveClassifier at some point after 5.0
+    //archiveClassifier = 'sources'
+}
 
-        licenses {
-            license {
-                name 'GNU General Public License, version 3'
-                url 'http://www.gnu.org/licenses/gpl-3.0.html'
-                distribution 'repo'
+publishing {
+    publications {
+        // name chosen by plugin-publish plugin
+        pluginMaven(MavenPublication) {
+            // already added by plugin-publish plugin
+            //from components.java
+            afterEvaluate {
+                artifact project.tasks.findByPath(':publishPluginGroovyDocsJar')
+                artifact sourceJar.get() // FIXME
+            }
+            pom {
+                name = 'gradle-download'
+                description = 'This plugin provides a Download task type for Gradle.  Tasks of this type can do HTTP and HTTPS downloads in parallel.'
+                url = 'https://github.com/vmj/gradle-download-worker'
+
+                licenses {
+                    license {
+                        name = 'GNU General Public License, version 3'
+                        url = 'http://www.gnu.org/licenses/gpl-3.0.html'
+                        distribution = 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'vmj'
+                        name = 'Mikko Värri'
+                        email = 'mikko@varri.fi'
+                    }
+                }
+
+                scm {
+                    url = 'https://github.com/vmj/gradle-download-worker'
+                    connection = 'scm:https://github.com/vmj/gradle-download-worker.git'
+                    developerConnection = 'scm:git@github.com:vmj/gradle-download-worker.git'
+                }
             }
         }
-
-        developers {
-            developer {
-                id 'vmj'
-                name 'Mikko Värri'
-                email 'mikko@varri.fi'
-            }
-        }
-
-        scm {
-            url 'https://github.com/vmj/gradle-download-worker'
-            connection 'scm:https://github.com/vmj/gradle-download-worker.git'
-            developerConnection 'scm:git@github.com:vmj/gradle-download-worker.git'
-        }
+    }
+    repositories {
+        mavenCentral()
     }
 }
 
