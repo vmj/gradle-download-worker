@@ -3,6 +3,7 @@ package fi.linuxbox.gradle.download
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -199,6 +200,7 @@ class DownloadTest extends Specification {
 
     }
 
+    @Ignore("Fails more often than works")
     @IgnoreIf({System.getProperty('IS_OFFLINE') == '1'})
     def "Connect timeout error"() {
         given:
