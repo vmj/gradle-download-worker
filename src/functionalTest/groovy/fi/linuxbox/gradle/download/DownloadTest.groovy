@@ -39,13 +39,7 @@ class DownloadTest extends Specification {
         """
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(gradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments("help")
-                .withPluginClasspath()
-                .build()
+        def result = gradle(gradleVersion, "help").build()
 
         then:
         result.task(":help").outcome == SUCCESS
@@ -86,13 +80,7 @@ class DownloadTest extends Specification {
         '''
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(gradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'test')
-                .withPluginClasspath()
-                .build()
+        def result = gradle(gradleVersion, '-q', 'test').build()
 
         then:
         result.task(':test').outcome == SUCCESS
@@ -119,13 +107,7 @@ class DownloadTest extends Specification {
         """
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(gradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('my-download')
-                .withPluginClasspath()
-                .build()
+        def result = gradle(gradleVersion, 'my-download').build()
 
         then:
         result.task(':my-download').outcome == SUCCESS
@@ -152,13 +134,7 @@ class DownloadTest extends Specification {
         """
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(gradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments("fetch-Slackware64-13.0")
-                .withPluginClasspath()
-                .build()
+        def result = gradle(gradleVersion, "fetch-Slackware64-13.0").build()
 
         then:
         result.task(":fetch-Slackware64-13.0").outcome == SUCCESS
@@ -185,12 +161,7 @@ class DownloadTest extends Specification {
         def writer = new StringWriter()
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(minimumGradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments("fetch")
-                .withPluginClasspath()
+        def result = gradle(minimumGradleVersion, "fetch")
                 .forwardStdOutput(writer)
                 .buildAndFail()
 
@@ -219,14 +190,8 @@ class DownloadTest extends Specification {
         def writer = new StringWriter()
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(minimumGradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments("fetch")
-                .withPluginClasspath()
+        def result = gradle(minimumGradleVersion, "fetch")
                 .forwardStdOutput(writer)
-                //.withDebug(true)
                 .buildAndFail()
 
         then:
@@ -252,14 +217,8 @@ class DownloadTest extends Specification {
         def writer = new StringWriter()
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(minimumGradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('--stacktrace', 'fetch')
-                .withPluginClasspath()
+        def result = gradle(minimumGradleVersion, 'fetch')
                 .forwardStdOutput(writer)
-                //.withDebug(true)
                 .buildAndFail()
 
         then:
@@ -284,12 +243,7 @@ class DownloadTest extends Specification {
         def writer = new StringWriter()
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(minimumGradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments("fetch")
-                .withPluginClasspath()
+        def result = gradle(minimumGradleVersion, "fetch")
                 .forwardStdOutput(writer)
                 .buildAndFail()
 
@@ -346,13 +300,7 @@ class DownloadTest extends Specification {
         '''
 
         when:
-        def result = GradleRunner
-                .create()
-                .withGradleVersion(gradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments("downloadAll")
-                .withPluginClasspath()
-                .build()
+        def result = gradle(gradleVersion, "downloadAll").build()
 
         then:
         result.task(":downloadAll").outcome == SUCCESS
@@ -360,13 +308,7 @@ class DownloadTest extends Specification {
         result.task(":copy-slackware64-14.2-changelog").outcome == SUCCESS
 
         when:
-        result = GradleRunner
-                .create()
-                .withGradleVersion(gradleVersion)
-                .withProjectDir(testProjectDir.root)
-                .withArguments("downloadAll")
-                .withPluginClasspath()
-                .build()
+        result = gradle(gradleVersion, "downloadAll").build()
 
         then:
         result.task(":downloadAll").outcome == UP_TO_DATE
@@ -375,6 +317,15 @@ class DownloadTest extends Specification {
 
         where:
         gradleVersion << gradleVersions
+    }
+
+    def gradle(String gradleVersion, String... args) {
+        GradleRunner
+                .create()
+                .withGradleVersion(gradleVersion)
+                .withProjectDir(testProjectDir.root)
+                .withPluginClasspath()
+                .withArguments(args)
     }
 
     def projectFile(String path) {
