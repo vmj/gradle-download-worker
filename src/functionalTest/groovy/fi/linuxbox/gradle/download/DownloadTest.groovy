@@ -262,39 +262,41 @@ class DownloadTest extends Specification {
         }
         
         import fi.linuxbox.gradle.download.Download
-      
-        task downloadAll {
+        
+        final downloadAll = tasks.register('downloadAll') {
             group 'My tasks'
             description 'Download all ChangeLogs'
         }
-      
+        
         ext {
             mirror = 'http://ftp.osuosl.org/pub/slackware'
             distroNames = ['slackware64']
             distroVersions = ['14.2']
         }
-      
+        
         distroNames.each { final distroName ->
             distroVersions.each { final distroVersion ->
                 final distro = "$distroName-$distroVersion"
                 final path = "$distroName/$distroVersion"
-                
+        
                 // Define a parallel download task for this distro version
-                final download = task("download-$distro-changelog", type: Download) {
+                final download = tasks.register("download-$distro-changelog", Download) {
                     from "$mirror/$distro/ChangeLog.txt"
-                    to project.layout.buildDirectory.file("changelogs/$path/ChangeLog.txt")
+                    to "$buildDir/changelogs/$path/ChangeLog.txt"
                 }
-                
+        
                 // Just to demo the UP-TO-DATE functionality:
                 // even though the download task does some work (conditional GET)
                 // it doesn't necessarily touch the artifact.
                 // That allows Gradle to skip the copy task.
-                final copy = task("copy-$distro-changelog", type: Copy) {
+                final copy = tasks.register("copy-$distro-changelog", Copy) {
                     from download
-                    into project.layout.buildDirectory.dir("copies/$path/")
+                    into "$buildDir/copies/$path/"
                 }
-                
-                downloadAll.dependsOn copy
+        
+                downloadAll.configure {
+                    dependsOn copy
+                }
             }
         }
         '''
