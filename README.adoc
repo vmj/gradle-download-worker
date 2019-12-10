@@ -5,60 +5,12 @@ image:https://travis-ci.org/vmj/gradle-download-worker.svg?branch=master["Build 
 This Gradle plugin implements a parallel download task type.
 
 The releases are available via
-https://search.maven.org/artifact/fi.linuxbox.gradle/gradle-download/0.5/jar[Maven Central],
+https://search.maven.org/artifact/fi.linuxbox.gradle/gradle-download/0.6/jar[Maven Central],
 https://bintray.com/bintray/jcenter/fi.linuxbox.gradle%3Agradle-download[Bintray], and
 https://plugins.gradle.org/plugin/fi.linuxbox.download[Gradle Plugin Portal].
 
-This plugin requires *Gradle 5.0 or newer*.
-
-[NOTE]
-====
-Version 0.5 has a *breaking change* in that it drops the word `worker` from many places.
-
-[source,groovy]
-----
-plugins {
-    id 'fi.linuxbox.download' version '0.5' // <1>
-}
-
-import fi.linuxbox.gradle.download.Download // <2> <3>
-
-task('foo', type: Download) { // <3>
-    //...
-}
-----
-
-<1> the plugin ID changed from `fi.linuxbox.download.worker` to `fi.linuxbox.download`
-<2> the implementation package changed from `fi.linuxbox.gradle.download.worker` to `fi.linuxbox.gradle.download`
-<3> the task class name changed from `DownloadWorkerTask` to just `Download`
-
-In addition, the plugin class name changed from `DownloadWorkerPlugin` to `DownloadPlugin`.
-This is relevant if you are applying the plugin via
-https://docs.gradle.org/current/javadoc/org/gradle/api/plugins/PluginContainer.html#apply-java.lang.Class-[PluginContainer.apply(Class)]
-method.
-
-In case you are using this project as a library dependency, the artifact ID changed from `gradle-download-worker` to
-`gradle-download`. In Gradle, that would look like:
-
-[source,groovy]
-----
-dependencies {
-    compile 'fi.linuxbox.gradle:gradle-download:0.5'
-}
-----
-
-And a Maven equivalent is:
-
-[source,xml]
-----
-<dependency>
-  <groupId>fi.linuxbox.gradle</groupId>
-  <artifactId>gradle-download</artifactId>
-  <version>0.5</version>
-</dependency>
-----
-
-====
+Plugin version 0.6 requires *Gradle 5.0 or newer*.
+If you need to use older Gradle (down to 4.3), use version 0.5 of the plugin.
 
 
 == Usage
@@ -68,7 +20,7 @@ Basic usage is as follows:
 [source,groovy]
 ----
 plugins {
-    id 'fi.linuxbox.download' version '0.5'
+    id 'fi.linuxbox.download' version '0.6'
 }
 
 import fi.linuxbox.gradle.download.Download
@@ -84,7 +36,7 @@ A more interesting example:
 [source,groovy]
 ----
 plugins {
-    id 'fi.linuxbox.download' version '0.5'
+    id 'fi.linuxbox.download' version '0.6'
 }
 
 import fi.linuxbox.gradle.download.Download
@@ -159,3 +111,30 @@ method.
 
 |===
 
+
+== Programmatic usage (rarely needed)
+
+In case you are using this project as a library dependency (perhaps as part of another Gradle plugin),
+in Gradle that would look like:
+
+[source,groovy]
+----
+dependencies {
+    compile 'fi.linuxbox.gradle:gradle-download:0.6'
+}
+----
+
+And a Maven equivalent is:
+
+[source,xml]
+----
+<dependency>
+  <groupId>fi.linuxbox.gradle</groupId>
+  <artifactId>gradle-download</artifactId>
+  <version>0.6</version>
+</dependency>
+----
+
+This is relevant if you are applying the plugin via
+https://docs.gradle.org/current/javadoc/org/gradle/api/plugins/PluginContainer.html#apply-java.lang.Class-[PluginContainer.apply(Class)]
+method.
