@@ -19,7 +19,7 @@ ext {
 }
 
 final sourceJar = tasks.register("publishPluginSourcesJar", Jar) {
-    from sourceSets.main.allJava
+    from sourceSets.main.allGroovy
     classifier = 'sources'
     // classifier changes to archiveClassifier at some point after 5.0
     //archiveClassifier = 'sources'
