@@ -25,6 +25,49 @@ final sourceJar = tasks.register("publishPluginSourcesJar", Jar) {
     //archiveClassifier = 'sources'
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+test {
+    if(gradle.startParameter.isOffline()) {
+        systemProperties.IS_OFFLINE = '1'
+    }
+}
+
+dependencies {
+    testImplementation("org.spockframework:spock-core:1.3-groovy-${spockGroovyVer}")
+}
+
+// configure java-gradle-plugin plugin
+gradlePlugin {
+    plugins {
+        "DownloadPlugin" {
+            id = pluginId
+            implementationClass = "fi.linuxbox.gradle.download.DownloadPlugin"
+        }
+    }
+}
+
+// configure plugin-publish plugin
+pluginBundle {
+    website = 'https://github.com/vmj/gradle-download-worker'
+    vcsUrl = 'https://github.com/vmj/gradle-download-worker'
+
+    plugins {
+        "DownloadPlugin" {
+            id = pluginId
+            displayName = "Parallel Download Task Type for Gradle"
+            description = "This plugin provides a Download task type for Gradle.  Tasks of this type can do HTTP and HTTPS downloads in parallel."
+            tags = ['download', 'task', 'url', 'http', 'https']
+        }
+    }
+}
+
+// configure maven-publish
 publishing {
     publications {
         // name chosen by plugin-publish plugin
@@ -66,47 +109,5 @@ publishing {
     }
     repositories {
         mavenCentral()
-    }
-}
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-    jcenter()
-}
-
-test {
-    if(gradle.startParameter.isOffline()) {
-        systemProperties.IS_OFFLINE = '1'
-    }
-}
-
-dependencies {
-    testImplementation("org.spockframework:spock-core:1.3-groovy-${spockGroovyVer}")
-}
-
-// configure java-gradle-plugin plugin
-gradlePlugin {
-    plugins {
-        "DownloadPlugin" {
-            id = pluginId
-            implementationClass = "fi.linuxbox.gradle.download.DownloadPlugin"
-        }
-    }
-}
-
-// configure plugin-publish plugin
-pluginBundle {
-    website = 'https://github.com/vmj/gradle-download-worker'
-    vcsUrl = 'https://github.com/vmj/gradle-download-worker'
-
-    plugins {
-        "DownloadPlugin" {
-            id = pluginId
-            displayName = "Parallel Download Task Type for Gradle"
-            description = "This plugin provides a Download task type for Gradle.  Tasks of this type can do HTTP and HTTPS downloads in parallel."
-            tags = ['download', 'task', 'url', 'http', 'https']
-        }
     }
 }
