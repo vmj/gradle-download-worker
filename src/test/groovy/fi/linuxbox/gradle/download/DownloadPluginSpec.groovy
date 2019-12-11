@@ -12,7 +12,7 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
-class DownloadTest extends Specification {
+class DownloadPluginSpec extends Specification {
     private static final String minimumGradleVersion = '5.0'
     private static final Set<String> gradleVersions = ['6.0.1', minimumGradleVersion]
 

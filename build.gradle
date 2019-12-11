@@ -3,7 +3,6 @@ plugins {
     id 'groovy'
     id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version '0.10.1'
-    id 'org.unbroken-dome.test-sets' version '2.2.1'
     id 'maven-publish'
 }
 
@@ -77,25 +76,18 @@ repositories {
     jcenter()
 }
 
-testSets {
-    functionalTest
-}
-check.dependsOn functionalTest
-
-functionalTest {
+test {
     if(gradle.startParameter.isOffline()) {
         systemProperties.IS_OFFLINE = '1'
     }
 }
 
 dependencies {
-    functionalTestImplementation("org.spockframework:spock-core:1.3-groovy-${spockGroovyVer}")
+    testImplementation("org.spockframework:spock-core:1.3-groovy-${spockGroovyVer}")
 }
 
 // configure java-gradle-plugin plugin
 gradlePlugin {
-    testSourceSets sourceSets.functionalTest
-
     plugins {
         "DownloadPlugin" {
             id = pluginId
