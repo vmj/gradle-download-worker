@@ -18,28 +18,28 @@ ext {
     spockGroovyVer = GroovySystem.version.replaceAll(/\.\d+$/,'')
 }
 
-final sourceJar = tasks.register("publishPluginSourcesJar", Jar) {
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+final sourcesJar = tasks.register("sourcesJar", Jar) {
     from sourceSets.main.allGroovy
     classifier = 'sources'
     // classifier changes to archiveClassifier at some point after 5.0
     //archiveClassifier = 'sources'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 repositories {
     jcenter()
+}
+
+dependencies {
+    testImplementation("org.spockframework:spock-core:1.3-groovy-${spockGroovyVer}")
 }
 
 test {
     if(gradle.startParameter.isOffline()) {
         systemProperties.IS_OFFLINE = '1'
     }
-}
-
-dependencies {
-    testImplementation("org.spockframework:spock-core:1.3-groovy-${spockGroovyVer}")
 }
 
 // configure java-gradle-plugin plugin
@@ -76,7 +76,7 @@ publishing {
             //from components.java
             afterEvaluate {
                 artifact project.tasks.findByPath(':publishPluginGroovyDocsJar')
-                artifact sourceJar.get() // FIXME
+                artifact sourcesJar.get() // FIXME: creates and configures the task even if not generating pom
             }
             pom {
                 name = 'gradle-download'
