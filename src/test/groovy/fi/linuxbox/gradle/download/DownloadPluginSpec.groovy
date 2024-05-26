@@ -235,7 +235,7 @@ class DownloadPluginSpec extends Specification {
         }
         import fi.linuxbox.gradle.download.Download
         task('fetch', type: Download) {
-          from 'http://www.linuxbox.fi/no-such-file.txt'
+          from 'http://yle.fi/no-such-file.txt'
           to "\$buildDir/foo.txt"
         }
         """
