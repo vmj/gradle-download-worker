@@ -2,21 +2,20 @@ package fi.linuxbox.gradle.download
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.gradle.workers.WorkAction
 
 import javax.inject.Inject
 
 @Slf4j
 @CompileStatic
-class DownloadRunnable implements Runnable {
-    private final Params params
+abstract class DownloadRunnable implements WorkAction<Params> {
 
     @Inject
-    DownloadRunnable(final Params params) {
-        this.params = params
+    DownloadRunnable() {
     }
 
     @Override
-    void run() {
+    void execute() {
         try {
             fetch()
         } catch (final UnknownHostException e) {
@@ -29,10 +28,11 @@ class DownloadRunnable implements Runnable {
     }
 
     private void fetch() throws IOException {
-        final HttpURLConnection cnx = urlConnection(params.from)
+        final HttpURLConnection cnx = urlConnection()
 
-        if (params.to.exists())
-            cnx.ifModifiedSince = params.to.lastModified()
+        final File to = new File(getParameters().to.get())
+        if (to.exists())
+            cnx.ifModifiedSince = to.lastModified()
 
         cnx.connect() // both timeouts thrown from here
 
@@ -55,12 +55,12 @@ class DownloadRunnable implements Runnable {
         }
 
         cnx.inputStream.with { final inputStream ->
-            params.to.newOutputStream().with { final outputStream ->
+            to.newOutputStream().with { final outputStream ->
                 outputStream << inputStream
             }
         }
 
-        if (!params.to.setLastModified(cnx.lastModified))
+        if (!to.setLastModified(cnx.lastModified))
             log.warn("unable to set modification time; up-to-date checks may not work")
     }
 
@@ -71,16 +71,18 @@ class DownloadRunnable implements Runnable {
      * @return A URL connection
      * @throws IOException in case opening the connection fails.
      */
-    private HttpURLConnection urlConnection(final URL url) throws IOException {
-        final HttpURLConnection cnx = (HttpURLConnection) url.openConnection()
+    private HttpURLConnection urlConnection() throws IOException {
+        final Params params = getParameters()
+
+        final HttpURLConnection cnx = (HttpURLConnection) params.from.get().toURL().openConnection()
 
         cnx.allowUserInteraction = false
         cnx.doInput = true
         cnx.doOutput = false
         cnx.useCaches = true
 
-        cnx.connectTimeout = params.connectTimeout
-        cnx.readTimeout = params.readTimeout
+        cnx.connectTimeout = params.connectTimeout.get()
+        cnx.readTimeout = params.readTimeout.get()
 
         return cnx
     }

@@ -13,8 +13,36 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class DownloadPluginSpec extends Specification {
-    private static final String minimumGradleVersion = '5.0'
-    private static final Set<String> gradleVersions = ['6.0.1', minimumGradleVersion]
+    private static final String minimumGradleVersion = '5.6'
+    private static final Set<String> gradleVersions = [
+            '8.7', // Mar 22, 2024
+            '8.6', // Feb 02, 2024
+            '8.5', // Nov 29, 2023
+            '8.4', // Oct 04, 2023
+            '8.3', // Aug 17, 2023
+            '8.2.1', // Jul 10, 2023
+            '8.1.1', // Apr 21, 2023
+            '8.0.2', // Mar 03, 2023
+            '7.6.4', // Feb 05, 2024
+            '7.5.1', // Aug 05, 2022
+            '7.4.2', // Mar 31, 2022
+            '7.3.3', // Dec 22, 2021
+            '7.2', // Aug 17, 2021
+            '7.1.1', // Jul 02, 2021
+            '7.0.2', // May 14, 2021
+            '6.9.4', // Feb 22, 2023
+            '6.8.3', // Feb 22, 2021
+            '6.7.1', // Nov 16, 2020
+            '6.6.1', // Aug 25, 2020
+            '6.5.1', // Jun 30, 2020
+            '6.4.1', // May 15, 2020
+            '6.3',  // Mar 24, 2020
+            '6.2.2', // Mar 04, 2020
+            '6.1.1', // Jan 24, 2020
+            '6.0.1', // Nov 18, 2019
+            '5.6.4', // Nov 01, 2019
+            minimumGradleVersion // Aug 14, 2019
+    ]
 
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
 
@@ -162,7 +190,7 @@ class DownloadPluginSpec extends Specification {
 
         when:
         def result = gradle(minimumGradleVersion, "fetch")
-                .forwardStdOutput(writer)
+                .forwardStdError(writer)
                 .buildAndFail()
 
         then:
@@ -191,7 +219,7 @@ class DownloadPluginSpec extends Specification {
 
         when:
         def result = gradle(minimumGradleVersion, "fetch")
-                .forwardStdOutput(writer)
+                .forwardStdError(writer)
                 .buildAndFail()
 
         then:
@@ -218,7 +246,7 @@ class DownloadPluginSpec extends Specification {
 
         when:
         def result = gradle(minimumGradleVersion, 'fetch')
-                .forwardStdOutput(writer)
+                .forwardStdError(writer)
                 .buildAndFail()
 
         then:
@@ -244,7 +272,7 @@ class DownloadPluginSpec extends Specification {
 
         when:
         def result = gradle(minimumGradleVersion, "fetch")
-                .forwardStdOutput(writer)
+                .forwardStdError(writer)
                 .buildAndFail()
 
         then:

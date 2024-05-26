@@ -3,13 +3,14 @@ package fi.linuxbox.gradle.download
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import groovy.transform.TupleConstructor
+import org.gradle.api.provider.Property
+import org.gradle.workers.WorkParameters
 
 @PackageScope
 @CompileStatic
-@TupleConstructor
-class Params implements Serializable {
-    final URL from
-    final File to
-    final int connectTimeout
-    final int readTimeout
+interface Params extends WorkParameters, Serializable {
+    Property<String> getFrom()
+    Property<String> getTo()
+    Property<Integer> getConnectTimeout()
+    Property<Integer> getReadTimeout()
 }

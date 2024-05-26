@@ -43,15 +43,11 @@ class Download extends DefaultTask {
 
     @TaskAction
     void fetch() {
-        final Params params = new Params(
-                from.get().toURL(),
-                to.get().asFile,
-                connectTimeout.getOrElse(DEFAULT_CONNECT_TIMEOUT),
-                readTimeout.getOrElse(DEFAULT_READ_TIMEOUT))
-
-        workerExecutor.submit(DownloadRunnable) { final config ->
-            config.setIsolationMode(NONE)
-            config.setParams(params)
+        workerExecutor.noIsolation().submit(DownloadRunnable) { final params ->
+            params.from.set(this.from)
+            params.to.set(this.to.get().asFile.path)
+            params.connectTimeout.set(this.connectTimeout.orElse(DEFAULT_CONNECT_TIMEOUT))
+            params.readTimeout.set(this.readTimeout.orElse(DEFAULT_READ_TIMEOUT))
         }
     }
 
