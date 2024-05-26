@@ -84,7 +84,7 @@ class DownloadPluginSpec extends Specification {
 
         then:
         result.task(':test').outcome == SUCCESS
-        result.output == '1\n2\n30000\n30000\n4\n5\n'
+        result.output == ['1','2','30000','30000','4','5',''].join(System.getProperty('line.separator'))
 
         where:
         gradleVersion << gradleVersions
